@@ -1,25 +1,14 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import OrderManagement from "./components/OrderManagement/OrderManagement";
+import { HeroUIProvider } from "@heroui/react";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HeroUIProvider>
+      <div className="w-full flex items-start justify-center p-8 pt-16">
+        <OrderManagement className="w-full max-w-7xl" />
+      </div>
+    </HeroUIProvider>
   );
 }
 
