@@ -32,11 +32,12 @@ interface OrderFormData {
 
 interface Props {
   editOrder: Order | null;
+  isLoading: boolean;
   onCancel: () => void;
   onSubmit: (order: Order) => void;
 }
 
-const OrderForm = ({ onCancel, editOrder, onSubmit }: Props) => {
+const OrderForm = ({ onCancel, editOrder, onSubmit, isLoading }: Props) => {
   const [errors] = useState("");
 
   const handleSubmit = (e: any) => {
@@ -50,7 +51,7 @@ const OrderForm = ({ onCancel, editOrder, onSubmit }: Props) => {
     const orderData: Order = {
       id: editOrder?.id,
       created: editOrder?.created,
-      state: Number(data.state),
+      state: data.state as OrderState,
       title: data.title,
       description: data.description,
     };
@@ -147,7 +148,7 @@ const OrderForm = ({ onCancel, editOrder, onSubmit }: Props) => {
         <Button color="danger" variant="light" onPress={onCancel}>
           Abbrechen
         </Button>
-        <Button color="primary" type="submit">
+        <Button color="primary" type="submit" isLoading={isLoading}>
           {editOrder ? "Aktualisieren" : "Hinzufügen"}
         </Button>
       </div>

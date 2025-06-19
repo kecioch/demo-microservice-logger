@@ -1,7 +1,7 @@
 export enum OrderState {
-  IN_PROGRESS,
-  CANCELED,
-  COMPLETED,
+  IN_PROGRESS="IN_PROGRESS",
+  CANCELED="CANCELED",
+  COMPLETED="COMPLETED",
 }
 
 export interface Order {

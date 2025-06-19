@@ -1,38 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OrderList from "../OrderList/OrderList";
-import { Button, useDisclosure } from "@heroui/react";
-import { Order, OrderState } from "../../types/order";
+import { addToast, Button, useDisclosure } from "@heroui/react";
+import { Order } from "../../types/order";
 import OrderModal from "../OrderModal/OrderModal";
-
-const ORDERS: Order[] = [
-  {
-    id: "1",
-    title: "Bestellung A320",
-    description: "Bau eines A320",
-    state: OrderState.IN_PROGRESS,
-    created: new Date(),
-  },
-  {
-    id: "2",
-    title: "Bestellung Erdbeer-Smoothie",
-    description: "Bitte einen Erdbeer Smoothie",
-    state: OrderState.CANCELED,
-    created: new Date(),
-  },
-];
+import { orderService } from "../../services/orderService";
 
 interface Props {
   className?: string;
 }
 
 const OrderManagement = ({ className }: Props) => {
-  const [orders, setOrders] = useState(ORDERS);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [editOrder, setEditOrder] = useState<null | Order>(null);
   const {
     isOpen: showOrderModal,
     onOpen: openOrderModal,
     onOpenChange: changeOrderModal,
-    onClose
+    onClose,
   } = useDisclosure();
 
   const handleOpenNewOrder = () => {
@@ -41,14 +27,12 @@ const OrderManagement = ({ className }: Props) => {
   };
 
   const handleOpenEditOrder = (id: string) => {
-    console.log("EDIT " + id);
     const order = orders.find((el) => el.id === id);
     order && setEditOrder(order);
     openOrderModal();
   };
 
   const handleDeleteOrder = (id: string) => {
-    console.log("DELETE " + id);
     onDelete(id);
   };
 
@@ -57,30 +41,104 @@ const OrderManagement = ({ className }: Props) => {
     else onAddOrder(order);
   };
 
-  const onDelete = (id: string) => {
-    setOrders((prev) => {
-      return prev.filter((el) => el.id !== id);
-    });
+  const onDelete = async (id: string) => {
+    try {
+      await orderService.delete(id);
+      setOrders((prev) => {
+        return prev.filter((el) => el.id !== id);
+      });
+      addToast({
+        title: "Auftrag löschen",
+        description: "Auftrag wurde erfolgreich gelöscht",
+        variant: "solid",
+        color: "success",
+      });
+    } catch (error) {
+      console.error(error);
+      addToast({
+        title: "Auftrag löschen",
+        description: "Auftrag konnte nicht gelöscht werden",
+        variant: "solid",
+        color: "danger",
+      });
+    }
   };
 
-  const onAddOrder = (order: Order) => {
-    console.log("CREATE ORDER", order);
-    setOrders(prev => {
-      return [...prev, order];
-    });
-    onClose();
+  const onAddOrder = async (order: Order) => {
+    try {
+      setIsLoadingModal(true);
+      const newOrder = await orderService.create(order);
+      setOrders((prev) => [...prev, newOrder]);
+      onClose();
+      addToast({
+        title: "Neuer Auftrag",
+        description: "Auftrag wurde erfolgreich hinzugefügt",
+        variant: "solid",
+        color: "success",
+      });
+    } catch (error) {
+      console.error(error);
+      addToast({
+        title: "Neuer Auftrag",
+        description: "Auftrag konnte nicht hinzugefügt werden",
+        variant: "solid",
+        color: "danger",
+      });
+    } finally {
+      setIsLoadingModal(false);
+    }
   };
 
-  const onEditOrder = (order: Order) => {
-    console.log("EDIT ORDER", order);
-    setOrders(prev => {
-        // const newOrderList = [...prev];
-        const index = prev.findIndex(el => el.id === order.id)
-        prev[index] = order;
-        return [...prev]
-    })
-    onClose();
+  const onEditOrder = async (order: Order) => {
+    try {
+      setIsLoadingModal(true);
+      const updatetOrder = await orderService.update(order);
+      setOrders((prev) => {
+        const index = prev.findIndex((el) => el.id === updatetOrder.id);
+        prev[index] = updatetOrder;
+        return [...prev];
+      });
+      onClose();
+      addToast({
+        title: "Auftrag bearbeiten",
+        description: "Auftrag wurde erfolgreich bearbeitet",
+        variant: "solid",
+        color: "success",
+      });
+    } catch (error) {
+      console.error(error);
+      addToast({
+        title: "Auftrag bearbeiten",
+        description: "Auftrag konnte nicht bearbeitet werden",
+        variant: "solid",
+        color: "danger",
+      });
+    } finally {
+      setIsLoadingModal(false);
+    }
   };
+
+  const fetchOrders = async () => {
+    try {
+      setIsLoading(true);
+      const orders = await orderService.getAll();
+      setOrders(orders);
+    } catch (error) {
+      console.error(error);
+      addToast({
+        title: "Laden von Aufträgen",
+        description: "Auftrag konnten nicht geladen werden",
+        variant: "solid",
+        color: "danger",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   return (
     <>
@@ -101,6 +159,7 @@ const OrderManagement = ({ className }: Props) => {
         <hr className="my-10" />
         <OrderList
           data={orders}
+          isLoading={isLoading}
           onEdit={handleOpenEditOrder}
           onDelete={handleDeleteOrder}
         />
@@ -109,6 +168,7 @@ const OrderManagement = ({ className }: Props) => {
       <OrderModal
         show={showOrderModal}
         editOrder={editOrder}
+        isLoading={isLoadingModal}
         onChange={changeOrderModal}
         onSubmit={handleOrderSubmit}
       />

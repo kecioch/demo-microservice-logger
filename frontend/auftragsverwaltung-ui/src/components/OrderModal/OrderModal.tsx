@@ -6,11 +6,18 @@ import { Order } from "../../types/order";
 interface Props {
   show: boolean;
   editOrder: Order | null;
+  isLoading: boolean;
   onChange: () => void;
   onSubmit: (order: Order) => void;
 }
 
-const OrderModal = ({ show, editOrder, onChange, onSubmit }: Props) => {
+const OrderModal = ({
+  show,
+  editOrder,
+  isLoading,
+  onChange,
+  onSubmit,
+}: Props) => {
   return (
     <Modal size="xl" isOpen={show} onOpenChange={onChange}>
       <ModalContent>
@@ -20,7 +27,12 @@ const OrderModal = ({ show, editOrder, onChange, onSubmit }: Props) => {
               {!editOrder ? "Neuer Auftrag" : "Auftrag bearbeiten"}
             </ModalHeader>
             <ModalBody>
-              <OrderForm onCancel={onClose} editOrder={editOrder} onSubmit={onSubmit} />
+              <OrderForm
+                onCancel={onClose}
+                editOrder={editOrder}
+                onSubmit={onSubmit}
+                isLoading={isLoading}
+              />
             </ModalBody>
           </>
         )}
