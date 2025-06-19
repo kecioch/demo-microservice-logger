@@ -1,7 +1,7 @@
 import { Order } from "../types/order";
 import { http } from "./http";
 
-const API_URL = process.env.REACT_APP_API_URL + "/persistence/orders";
+const API_URL = process.env.REACT_APP_API_URL + "/api/orders";
 
 export const orderService = {
   async create(order: Order): Promise<Order> {

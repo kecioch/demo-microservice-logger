@@ -1,5 +1,6 @@
 import express from 'express';
 import orderRoutes from './routes/orderRoutes';
+import { verifyAuthToken } from './middleware/authorization';
 
 const app = express();
 const cors = require('cors');
@@ -14,7 +15,7 @@ app.use(
 );
 
 // Routes
-app.use('/persistence/orders', orderRoutes);
+app.use('/persistence/orders', verifyAuthToken, orderRoutes);
 
 // Global error handler
 // app.use(errorHandler);

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 import app from './app';
 import config from './config/config';
 import { PrismaClient } from './generated/prisma';

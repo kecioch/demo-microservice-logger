@@ -6,12 +6,13 @@ const router = Router();
 
 router.get('/', async (req, res) => {
   try {
+    console.log('GET /persistence/orders');
     const orders = await prisma.order.findMany({
       orderBy: [{ id: 'asc' }],
     });
     res.status(200).json(orders);
   } catch (error) {
-    console.error('Error creating order:', error);
+    console.error('Error loading order:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { title, description, state } = req.body;
-    console.log('POST', title, description, state);
+    console.log('POST /persistence/orders', title, description, state);
 
     // Validation
     if (!Object.values(OrderState).includes(state)) {
@@ -46,12 +47,13 @@ router.post('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('DELETE /persistence/orders/' + id);
     const deletedOrder = await prisma.order.delete({
       where: { id: Number(id) },
     });
     res.status(200).json(deletedOrder);
   } catch (error: any) {
-    console.error('Error creating order:', error);
+    console.error('Error deleting order:', error);
     if (error.code === 'P2025') {
       res.status(404).json({ message: 'Order not found' });
       return;
