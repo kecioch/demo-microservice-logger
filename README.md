@@ -10,7 +10,7 @@ This project includes:
 - Two Node.js / Express microservices:
     - **API Gateway:** Handles external requests and forwards them
     - **Persistence Service:** Manages database operations via Prisma and PostgreSQL
-- Both services use Winston for logging and send logs to Logstash
+- Both services use Winston and Morgan for logging and send logs to Logstash
 - Logs are visualized in Kibana, with the full ELK stack running in Docker
 
 
