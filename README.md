@@ -103,13 +103,22 @@ $ npm run dev
 # 2.1. Navigate into folder (from main folder)
 $ cd backend/persistence
 
-# 1.2. Install dependencies
+# 2.2. Install dependencies
 $ npm i
 
-# 1.3. Rename .env.sample to .env (and configure it if needed)
+# 2.3. Rename .env.sample to .env (and configure it if needed)
 
-# 1.4. Start application
+# 2.4. Map data model to the database schema
+$ npx prisma migrate dev --name init
+
+# 2.5. Generate prisma client based on schema
+$ npx prisma generate
+
+# 2.6. Start application
 $ npm run dev
+
+# (2.7. Start prisma studio to view database)
+$ npx prisma studio
 ```
 
 # Technologies
