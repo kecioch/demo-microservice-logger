@@ -6,3 +6,6 @@ dist
 
 .env
 /src/generated/prisma
+
+/logs
+logs

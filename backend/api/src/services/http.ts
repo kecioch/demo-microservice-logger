@@ -1,17 +1,19 @@
-const configHeaders = () => ({
-  Accept: 'application/json',
-  'Content-Type': 'application/json',
+const configHeaders = (requestID?: string) => ({
+  Accept: "application/json",
+  "Content-Type": "application/json",
   Authorization: `Bearer ${process.env.PERSISTENCE_TOKEN}`,
+  "x-request-id": requestID,
 });
 
 const request = async <T>(
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  method: "GET" | "POST" | "PUT" | "DELETE",
   url: string,
+  requestID?: string,
   data?: any,
 ): Promise<T> => {
   const options: RequestInit = {
     method,
-    headers: configHeaders(),
+    headers: configHeaders(requestID),
     ...(data && { body: JSON.stringify(data) }),
   };
 
@@ -22,8 +24,8 @@ const request = async <T>(
 };
 
 export const http = {
-  get: <T>(url: string) => request<T>('GET', url),
-  post: <T>(url: string, data: any) => request<T>('POST', url, data),
-  put: <T>(url: string, data: any) => request<T>('PUT', url, data),
-  delete: (url: string) => request<void>('DELETE', url),
+  get: <T>(url: string, requestID?: string) => request<T>("GET", url, requestID),
+  post: <T>(url: string, data: any, requestID?: string) => request<T>("POST", url, requestID, data),
+  put: <T>(url: string, data: any, requestID?: string) => request<T>("PUT", url, requestID, data),
+  delete: (url: string, requestID?: string) => request<void>("DELETE", url, requestID),
 };

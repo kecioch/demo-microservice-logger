@@ -1,30 +1,37 @@
 import { Router } from 'express';
 import { prisma } from '..';
 import { OrderState } from '../generated/prisma';
+import logger, { errorLogger } from '../logger/logger';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
+  const requestID = req.headers['x-request-id'];
   try {
-    console.log('GET /persistence/orders');
     const orders = await prisma.order.findMany({
       orderBy: [{ id: 'asc' }],
     });
+    logger.info('Orders loaded from database successfully', {
+      requestID,
+    });
     res.status(200).json(orders);
   } catch (error) {
-    console.error('Error loading order:', error);
+    errorLogger('Failed to load orders from database', error, requestID);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 router.post('/', async (req, res) => {
+  const requestID = req.headers['x-request-id'];
   try {
     const { title, description, state } = req.body;
-    console.log('POST /persistence/orders', title, description, state);
 
     // Validation
     if (!Object.values(OrderState).includes(state)) {
       res.status(400).json({ message: 'Invalid order state' });
+      logger.error('Failed to create new order. Invalid order state', {
+        requestID,
+      });
       return;
     }
 
@@ -37,39 +44,52 @@ router.post('/', async (req, res) => {
       },
     });
 
+    logger.info('Created new order in database successfully', {
+      order,
+      requestID,
+    });
     res.status(201).json(order);
   } catch (error) {
-    console.error('Error creating order:', error);
+    errorLogger('Failed to create new order', error, requestID);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 router.delete('/:id', async (req, res) => {
+  const requestID = req.headers['x-request-id'];
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    console.log('DELETE /persistence/orders/' + id);
     const deletedOrder = await prisma.order.delete({
       where: { id: Number(id) },
     });
+    logger.info(`Successfully deleted order #${id} from database`, {
+      requestID,
+    });
     res.status(200).json(deletedOrder);
   } catch (error: any) {
-    console.error('Error deleting order:', error);
     if (error.code === 'P2025') {
+      logger.error(`Failed to delete Order #${id}. Order not found`, {
+        requestID,
+      });
       res.status(404).json({ message: 'Order not found' });
       return;
     }
+    errorLogger(`Failed to delete order #${id}`, error, requestID);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 router.put('/:id', async (req, res) => {
+  const requestID = req.headers['x-request-id'];
+  const { id } = req.params;
   try {
-    const { id } = req.params;
     const { title, description, state } = req.body;
-
     // Validation
     if (!Object.values(OrderState).includes(state)) {
       res.status(400).json({ message: 'Invalid order state' });
+      logger.error(`Failed to update order #${id}. Invalid order state`, {
+        requestID,
+      });
       return;
     }
 
@@ -82,14 +102,21 @@ router.put('/:id', async (req, res) => {
       },
     });
 
+    logger.info(`Updatet order #${id} in database successfully`, {
+      updatedOrder,
+      requestID,
+    });
     res.status(200).json(updatedOrder);
   } catch (error: any) {
     if (error.code === 'P2025') {
+      logger.error(`Failed to update Order #${id}. Order not found`, {
+        requestID,
+      });
       res.status(404).json({ message: 'Order not found' });
       return;
     }
 
-    console.error('Error updating order:', error);
+    errorLogger(`Failed to update order #${id}`, error, requestID);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
