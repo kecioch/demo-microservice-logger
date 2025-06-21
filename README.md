@@ -58,17 +58,19 @@ $ cd demo-microservice-logger
 # 1. Navigate into folder (from main folder)
 $ cd elk-stack
 
-# (2. Configure container & logstash)
+# 2. Rename .env.sample to .env (and configure it if needed)
+
+# (3. Configure container & logstash)
 # edit docker-compose.yml
 # edit logstash/logstash.conf
 
-# 3. Build & run docker container
+# 4. Build & run docker container
 $ docker-compose up --build
 
-# 4. Open kibana dashboard in your webbrowser
+# 5. Open kibana dashboard in your webbrowser
 # http://localhost:5601/
 
-# (5. Remove docker container)
+# (6. Remove docker container)
 $ docker-compose down
 ```
 
