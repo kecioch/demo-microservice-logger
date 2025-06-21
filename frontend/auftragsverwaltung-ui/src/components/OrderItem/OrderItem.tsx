@@ -3,6 +3,7 @@ import { Order, OrderState } from "../../types/order";
 import { Button } from "@heroui/react";
 import { convertStateToText } from "../../services/orderState";
 import { EditIcon, TrashIcon } from "../icons/icons";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
   data: Order;
@@ -23,7 +24,13 @@ const getColor = (state: OrderState) => {
 
 const OrderItem = ({ data, onEdit, onDelete }: Props) => {
   return (
-    <div className="w-full bg-gray-200 rounded-lg p-5 text-left flex justify-between flex-wrap gap-5 shadow-md">
+    <motion.div
+      className="w-full bg-gray-200 rounded-lg p-5 text-left flex justify-between flex-wrap gap-5 shadow-md"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="flex-1 min-w-0">
         <div className="flex gap-4 mb-2">
           <span className="font-bold text-xl">#{data.id}</span>
@@ -57,7 +64,7 @@ const OrderItem = ({ data, onEdit, onDelete }: Props) => {
           <TrashIcon fill="#160a0a" />
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
