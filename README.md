@@ -65,7 +65,10 @@ $ cd elk-stack
 # 3. Build & run docker container
 $ docker-compose up --build
 
-# (4. Remove docker container)
+# 4. Open kibana dashboard in your webbrowser
+# http://localhost:5601/
+
+# (5. Remove docker container)
 $ docker-compose down
 ```
 
