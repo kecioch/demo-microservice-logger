@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
       requestID,
     });
     const orders = await http.get(ORDER_PERSISTENCE_URL, requestID);
-    console.log('REQUESTID', req.headers['x-request-id']);
     res.status(200).json(orders);
   } catch (error: any) {
     errorLogger(
