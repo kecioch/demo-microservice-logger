@@ -17,9 +17,10 @@ This project includes:
 # Screenshot
 
 <div align="center" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 2em">
-  <img src="./static/screenshot-elastic.png" width="80%" />
-  <img src="./static/screenshot-ui.png" width="80%" />
-  <img src="./static/screenshot-ui-add.png" width="80%" />
+  <img src="./static/screenshot-elastic.png" width="45%" />
+  <img src="./static/screenshot-data-visualization.png" width="45%" />
+  <img src="./static/screenshot-ui.png" width="45%" />
+  <img src="./static/screenshot-ui-add.png" width="45%" />
 </div >
 
 # Structure
