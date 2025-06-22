@@ -14,7 +14,7 @@ This project includes:
 - Logs are visualized in Kibana, with the full ELK stack running in Docker
 
 
-# Screenshot
+# Screenshots
 
 <div align="center" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 2em">
   <img src="./static/screenshot-elastic.png" width="45%" />
